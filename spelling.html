@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Checker</title>
+    <style>
+        /* CSS rules */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        textarea {
+            width: 25%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            width: 25%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="textInput" rows="10" cols="50"></textarea><br>
+    <button onclick="checkGrammar()">Check Grammar</button>
+    <div id="result"></div>
+
+    <script>
+        async function checkGrammar() {
+            const text = document.getElementById('textInput').value;
+
+            // Call the LanguageTool API to check grammar
+            const response = await fetch('https://api.languagetool.org/v2/check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `text=${encodeURIComponent(text)}&language=en-US`
+            });
+
+            const data = await response.json();
+
+            // Display the results
+            const resultElement = document.getElementById('result');
+            if (data.matches && data.matches.length > 0) {
+                let resultHTML = '<h3>Grammar Issues:</h3>';
+                data.matches.forEach(match => {
+                    resultHTML += `<p>${match.message} - Suggested Correction: ${match.replacements.map(rep => rep.value).join(', ')}</p>`;
+                });
+                resultElement.innerHTML = resultHTML;
+            } else {
+                resultElement.textContent = 'No grammar issues found.';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customizable Wikipedia Content Editor</title>
+  <style>
+    /* Default styling for content display */
+    #contentDisplay {
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 10px;
+    }
+  </style>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <h1>Wikipedia Content Editor</h1>
+  
+  <label for="searchInput">Enter Title:</label>
+  <input type="text" id="searchInput" placeholder="Enter your Title">
+  <button onclick="fetchAndDisplayContent()">Fetch Content</button>
+
+  <!-- Dropdowns for customization -->
+  <label for="fontType">Select font type:</label>
+  <select id="fontType" onchange="changeFont()">
+    <option value="Arial, sans-serif">Arial (Default)</option>
+    <option value="Verdana, sans-serif">Verdana</option>
+    <option value="Georgia, serif">Georgia</option>
+    <option value="Times New Roman, serif">Times New Roman</option>
+    <option value="Courier New, monospace">Courier New</option>
+    <option value="Tahoma, sans-serif">Tahoma</option>
+    <option value="Helvetica, sans-serif">Helvetica</option>
+    <option value="Lucida Sans Unicode, sans-serif">Lucida Sans Unicode</option>
+    <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+    <option value="Palatino Linotype, serif">Palatino Linotype</option>
+    <option value="Book Antiqua, serif">Book Antiqua</option>
+    <option value="Arial Black, sans-serif">Arial Black</option>
+    <option value="Impact, sans-serif">Impact</option>
+    <option value="Comic Sans MS, cursive">Comic Sans MS</option>
+    <option value="Century Gothic, sans-serif">Century Gothic</option>
+    <option value="Garamond, serif">Garamond</option>
+    <option value="Franklin Gothic Medium, sans-serif">Franklin Gothic Medium</option>
+    <option value="Courier, monospace">Courier</option>
+    <option value="Brush Script MT, cursive">Brush Script MT</option>
+    <option value="Copperplate, serif">Copperplate</option> 
+    <option value="Arial Narrow, sans-serif">Arial Narrow</option>
+    <option value="Arial Rounded MT Bold, sans-serif">Arial Rounded MT Bold</option>
+    <option value="Baskerville, serif">Baskerville</option>
+    <option value="Cambria, serif">Cambria</option>
+    <option value="Candara, sans-serif">Candara</option>
+    <option value="Constantia, serif">Constantia</option>
+    <option value="Corbel, sans-serif">Corbel</option>
+    <option value="DejaVu Sans, sans-serif">DejaVu Sans</option>
+    <option value="DejaVu Serif, serif">DejaVu Serif</option>
+    <option value="Didot, serif">Didot</option>
+    <option value="Futura, sans-serif">Futura</option>
+    <option value="Geneva, sans-serif">Geneva</option>
+    <option value="Gill Sans, sans-serif">Gill Sans</option>
+    <option value="Hoefler Text, serif">Hoefler Text</option>
+    <option value="Lato, sans-serif">Lato</option>
+    <option value="Leelawadee, sans-serif">Leelawadee</option>
+    <option value="Monaco, monospace">Monaco</option>
+    <option value="Optima, sans-serif">Optima</option>
+    <option value="Segoe UI, sans-serif">Segoe UI</option>
+    <option value="Verdana, Geneva, sans-serif">Verdana, Geneva</option>
+    <!-- Add more font options as needed -->
+  </select>
+
+  <!-- <label for="fontSize">Enter Font Size:</label>
+  <input type="text" id="fontSize" >
+  <button onclick="changeFontSize()">change font size</button> -->
+
+  <label for="fontSize">Select font size:</label>
+  <select id="fontSize" onchange="changeFontSize()">
+    <option value="14px">14px</option>
+<option value="16px">16px (Default)</option>
+<option value="18px">18px</option>
+<option value="20px">20px</option>
+<option value="22px">22px</option>
+<option value="24px">24px</option>
+<option value="26px">26px</option>
+<option value="28px">28px</option>
+<option value="30px">30px</option>
+<option value="32px">32px</option>
+<option value="36px">36px</option>
+<option value="40px">40px</option>
+<option value="48px">48px</option>
+<option value="56px">56px</option>
+<option value="64px">64px</option>
+<option value="72px">72px</option>
+<!-- Add more font size options as needed -->
+
+  </select>
+
+  <label for="backgroundColor">Select background color:</label>
+  <input type="color" id="backgroundColor" value="#f9f9f9" onchange="changeBackgroundColor() ">
+
+  <div id="contentDisplay" class="editable">
+    <!-- Content will be displayed here -->
+  </div>
+
+  <script>
+    
+    function changeFont() {
+      var fontType = document.getElementById('fontType').value;
+            var editableContent = document.querySelector('.editable');
+            editableContent.style.fontFamily = fontType;
+    }
+    function changeFontSize() {
+      var fontSize = document.getElementById('fontSize').value;
+            var editableContent = document.querySelector('.editable');
+            editableContent.style.fontSize = fontSize;
+    }
+    function changeBackgroundColor() {
+            var backgroundColor = document.getElementById('backgroundColor').value;
+            var editableContent = document.querySelector('.editable');
+            editableContent.style.backgroundColor = backgroundColor;
+        }
+    
+    async function fetchWikipediaContent(query) {
+      // ... (unchanged)
+
+      // Rest of the function remains the same
+    }
+ async function fetchWikipediaContent(query) {
+      try {
+        const apiUrl = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${encodeURIComponent(
+          query
+        )}&utf8=1&exintro=1&origin=*`;
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        const page = Object.values(data.query.pages)[0];
+
+        if (!page.hasOwnProperty('missing')) {
+          return page.extract;
+        } else {
+          return 'Page does not exist.';
+        }
+      } catch (error) {
+        console.error('Error fetching Wikipedia content:', error.message);
+        return null;
+      }
+    }
+
+    function fetchAndDisplayContent() {
+      const searchInput = document.getElementById('searchInput');
+      const contentDisplay = document.getElementById('contentDisplay');
+      
+
+      const searchQuery = searchInput.value;
+
+      if (!searchQuery) {
+        alert('Please enter a search query.');
+        return;
+      }
+
+      fetchWikipediaContent(searchQuery)
+        .then(result => {
+          contentDisplay.innerHTML = `<p>${result}</p>`;
+        })
+        .catch(error => {
+          contentDisplay.innerHTML = `<p>Error: ${error.message}</p>`;
+        });
+    }
+    function fetchAndDisplayContent() {
+      const searchInput = document.getElementById('searchInput');
+      const contentDisplay = document.getElementById('contentDisplay');
+      const fontTypeSelect = document.getElementById('fontType');
+      const fontSizeSelect = document.getElementById('fontSize');
+      const backgroundColorInput = document.getElementById('backgroundColor');
+
+      const searchQuery = searchInput.value;
+
+      if (!searchQuery) {
+        alert('Please enter a search query.');
+        return;
+      }
+
+      fetchWikipediaContent(searchQuery)
+        .then(result => {
+          // Get selected values from dropdowns
+          const selectedFontType = fontTypeSelect.value;
+          const selectedFontSize = fontSizeSelect.value;
+          const selectedBackgroundColor = backgroundColorInput.value;
+
+          // Apply custom styles
+          contentDisplay.innerHTML = `<p style="font-family: ${selectedFontType}; font-size: ${selectedFontSize}; background-color: ${selectedBackgroundColor};">${result}</p>`;
+        })
+        .catch(error => {
+          contentDisplay.innerHTML = `<p>Error: ${error.message}</p>`;
+        });
+    }
+  </script>
+  <nav>
+    <ul>
+        <li><a href="edit.html">YouTube Links</a></li>
+        <br>
+        <br>
+        <li><a href="spelling.html">Check Grammar</a></li>
+        <br>
+        <br>
+        <li><a href="synonyms.html">Synonyms</a></li>
+        <br>
+        <br>
+    </ul>
+</nav>
+
+</body>
+</html>

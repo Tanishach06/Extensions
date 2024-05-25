@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word to Synonym Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        async function convertToSynonym() {
+            var wordInput = document.getElementById('word');
+            var synonymOutput = document.getElementById('synonym');
+            var inputWord = wordInput.value.toLowerCase();
+            
+            try {
+                const response = await fetch(https://api.datamuse.com/words?ml=${inputWord});
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    synonymOutput.textContent = data.map(word => word.word).join(', ');
+                } else {
+                    synonymOutput.textContent = "No synonyms found";
+                }
+            } catch (error) {
+                console.error('Error fetching synonyms:', error);
+                synonymOutput.textContent = "Error fetching synonyms";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Word to Synonym Converter</h2>
+    <label for="word">Enter a word:</label>
+    <input type="text" id="word">
+    <button onclick="convertToSynonym()">Convert</button>
+    <p>Synonyms:</p>
+    <p id="synonym"></p>
+</body>
+</html>
